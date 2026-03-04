@@ -14,8 +14,23 @@ export const appRouter = createTRPCRouter({
                 greeting: `hello ${opts.input.text}`,
             };
         }),
-    investors: baseProcedure.query(async () => {
-        return await prisma.investors.findMany({ take: 10 });
+    investors: baseProcedure.input(
+        z.object({
+            page: z.number().optional(),
+            page_size: z.number().optional(),
+        }),
+    ).query(async (opts) => {
+        const { page = 1, page_size = 10 } = opts.input;
+        const skip = (page - 1) * page_size;
+        const items = await prisma.investors.findMany({
+            skip,
+            take: page_size,
+        });
+        const total = await prisma.investors.count();
+        return {
+            items,
+            total,
+        };
     }),
 });
 

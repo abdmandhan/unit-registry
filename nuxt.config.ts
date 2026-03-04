@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     'vuetify-nuxt-module',
     '@pinia/nuxt',
-    '@nuxtjs/i18n',
+    // '@nuxtjs/i18n',
     '@nuxtjs/tailwindcss',
   ],
 
@@ -21,11 +21,15 @@ export default defineNuxtConfig({
 
   vuetify: {
     moduleOptions: {},
-    vuetifyOptions: {},
+    vuetifyOptions: {
+      theme: {
+        defaultTheme: 'light',
+      }
+    },
   },
 
-  i18n: {
-    defaultLocale: 'en',
-    vueI18n: './i18n.config.ts',
-  },
+  // i18n: {
+  //   defaultLocale: 'en',
+  //   vueI18n: './i18n.config.ts',
+  // },
 })
