@@ -44,48 +44,128 @@
           {{ form.investor_individual }}
 
           <!-- investor individual -->
-          <v-col cols="12" md="12">
-            <v-subheader>Investor Individual</v-subheader>
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-text-field
-              label="Birth Date"
-              v-model="form.investor_individual.birth_date"
-              type="date"
-            />
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-text-field
-              label="Birth Place"
-              v-model="form.investor_individual.birth_place"
-            />
-          </v-col>
+          <template v-if="form.investor_type_id === 'I'">
+            <v-col cols="12" md="12">
+              <v-subheader>Investor Individual</v-subheader>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                label="Birth Date"
+                v-model="form.investor_individual.birth_date"
+                type="date"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                label="Birth Place"
+                v-model="form.investor_individual.birth_place"
+              />
+            </v-col>
 
-          <v-col cols="12" md="6">
-            <v-text-field
-              label="Mother Name"
-              v-model="form.investor_individual.mother_name"
-            />
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-switch
-              label="Is Employee"
-              v-model="form.investor_individual.is_employee"
-            />
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-text-field
-              label="Tax Number"
-              v-model="form.investor_individual.tax_number"
-            />
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-text-field
-              label="Tax Effective Date"
-              v-model="form.investor_individual.tax_effective_date"
-              type="date"
-            />
-          </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                label="Mother Name"
+                v-model="form.investor_individual.mother_name"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-switch
+                label="Is Employee"
+                v-model="form.investor_individual.is_employee"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                label="Tax Number"
+                v-model="form.investor_individual.tax_number"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                label="Tax Effective Date"
+                v-model="form.investor_individual.tax_effective_date"
+                type="date"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-select
+                label="Gender"
+                v-model="form.investor_individual.gender_id"
+                :items="genderReferences"
+                item-title="name"
+                item-value="code"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-select
+                label="Education"
+                v-model="form.investor_individual.education_id"
+                :items="educationReferences"
+                item-title="name"
+                item-value="code"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-select
+                label="Card Type"
+                v-model="form.investor_individual.card_type_id"
+                :items="cardTypeReferences"
+                item-title="name"
+                item-value="code"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                label="Card Number"
+                v-model="form.investor_individual.card_number"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-select
+                label="Income"
+                v-model="form.investor_individual.income_id"
+                :items="incomeReferences"
+                item-title="name"
+                item-value="code"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-select
+                label="Income Source"
+                v-model="form.investor_individual.income_source_id"
+                :items="incomeSourceReferences"
+                item-title="name"
+                item-value="code"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-select
+                label="Marital Status"
+                v-model="form.investor_individual.marital_id"
+                :items="maritalReferences"
+                item-title="name"
+                item-value="code"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-select
+                label="Nationality"
+                v-model="form.investor_individual.nationality_id"
+                :items="nationalityReferences"
+                item-title="name"
+                item-value="code"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-select
+                label="Job"
+                v-model="form.investor_individual.job_id"
+                :items="jobReferences"
+                item-title="name"
+                item-value="code"
+              />
+            </v-col>
+          </template>
         </v-row>
       </v-card-text>
     </v-card>
@@ -142,12 +222,47 @@ const form = reactive({
     tax_number: "",
     tax_effective_date: "",
     gender_id: "",
+    education_id: "",
+    card_type_id: "",
+    card_number: "",
+    income_id: "",
+    income_source_id: "",
+    marital_id: "",
+    nationality_id: "",
+    job_id: "",
   },
 });
 
 const { data: investor } = await $trpc.investor.get.useQuery(() => ({
   id: props.investorId,
 }));
+
+const { data: genderReferences } = await $trpc.references.useQuery(() => ({
+  reference_name: "Sex",
+}));
+const { data: educationReferences } = await $trpc.references.useQuery(() => ({
+  reference_name: "Education",
+}));
+const { data: cardTypeReferences } = await $trpc.references.useQuery(() => ({
+  reference_name: "IDType",
+}));
+const { data: incomeReferences } = await $trpc.references.useQuery(() => ({
+  reference_name: "Pendapatan/Bulan(I)",
+}));
+const { data: incomeSourceReferences } = await $trpc.references.useQuery(
+  () => ({ reference_name: "IDSourceOfMainIncome" }),
+);
+const { data: maritalReferences } = await $trpc.references.useQuery(() => ({
+  reference_name: "MaritalStatus",
+}));
+const { data: nationalityReferences } = await $trpc.references.useQuery(() => ({
+  reference_name: "Kewarganegaraan",
+}));
+const { data: jobReferences } = await $trpc.references.useQuery(() => ({
+  reference_name: "Jabatan",
+}));
+// const { data: jobCategoryReferences } = await $trpc.references.useQuery(() => ({ reference_name: "UnitAmountValidationMode" }));
+// const { data: jobRoleReferences } = await $trpc.references.useQuery(() => ({ reference_name: "ProductCategory" }));
 
 if (!investor) {
   throw new Error("Investor not found");
@@ -184,6 +299,14 @@ watch(
             .toISOString()
             .split("T")[0] ?? "",
         gender_id: newVal?.investor_individuals?.gender_id ?? "",
+        education_id: newVal?.investor_individuals?.education_id ?? "",
+        card_type_id: newVal?.investor_individuals?.card_type_id ?? "",
+        card_number: newVal?.investor_individuals?.card_number ?? "",
+        income_id: newVal?.investor_individuals?.income_id ?? "",
+        income_source_id: newVal?.investor_individuals?.income_source_id ?? "",
+        marital_id: newVal?.investor_individuals?.marital_id ?? "",
+        nationality_id: newVal?.investor_individuals?.nationality_id ?? "",
+        job_id: newVal?.investor_individuals?.job_id ?? "",
       };
     }
   },
