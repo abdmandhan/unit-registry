@@ -2,7 +2,7 @@
   <v-app>
     <v-main>
       <v-btn @click="test"> test </v-btn>
-      {{ hello }}
+      {{ investors }}
     </v-main>
   </v-app>
 </template>
@@ -11,7 +11,7 @@
 //
 const { $trpc } = useNuxtApp();
 const { data } = await useFetch("/api/test");
-const { data: hello } = await $trpc.hello.useQuery({ text: "client" });
+const { data: investors } = await $trpc.investors.useQuery();
 
 const test = async () => {
   const { data } = await useFetch("/api/test", {

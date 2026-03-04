@@ -1,0 +1,639 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated"
+  // output   = "../server/generated/prisma"
+  // output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model accounts {
+  id                String  @id
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  users             users   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model agent_investors {
+  id             Int       @id @default(autoincrement())
+  agent_id       Int
+  investor_id    String
+  effective_date DateTime  @db.Date
+  created_at     DateTime  @default(now())
+  updated_at     DateTime
+  agents         agents    @relation(fields: [agent_id], references: [id])
+  investors      investors @relation(fields: [investor_id], references: [id])
+
+  @@unique([agent_id, investor_id])
+}
+
+model agent_levels {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  tree_level Int      @default(1)
+  created_at DateTime @default(now())
+  updated_at DateTime
+  agents     agents[]
+}
+
+model agents {
+  id                 Int                  @id @default(autoincrement())
+  agent_level_id     Int
+  agent_type_id      String
+  agent_parent_id    Int?
+  code               String               @unique
+  name               String
+  email              String?              @unique
+  phone_number       String?
+  is_active          Boolean              @default(true)
+  created_at         DateTime             @default(now())
+  updated_at         DateTime
+  version            Int                  @default(1)
+  agent_investors    agent_investors[]
+  agent_levels       agent_levels         @relation(fields: [agent_level_id], references: [id])
+  agents             agents?              @relation("agentsToagents", fields: [agent_parent_id], references: [id])
+  other_agents       agents[]             @relation("agentsToagents")
+  aum_investor_daily aum_investor_daily[]
+}
+
+model aum_daily {
+  id             Int      @id @default(autoincrement())
+  date           DateTime @unique @db.Date
+  aum_value      Decimal  @db.Decimal(30, 2)
+  management_fee Decimal  @db.Decimal(30, 2)
+  created_at     DateTime @default(now())
+  updated_at     DateTime
+
+  @@index([date])
+}
+
+model aum_investor_daily {
+  id             BigInt    @id @default(autoincrement())
+  investor_id    String
+  agent_id       Int
+  fund_id        Int
+  date           DateTime  @db.Date
+  units          Decimal   @db.Decimal(30, 8)
+  nav_per_unit   Decimal   @db.Decimal(30, 8)
+  aum_value      Decimal   @db.Decimal(30, 2)
+  days           Int       @default(1)
+  management_fee Decimal   @db.Decimal(30, 2)
+  agents         agents    @relation(fields: [agent_id], references: [id])
+  funds          funds     @relation(fields: [fund_id], references: [id])
+  investors      investors @relation(fields: [investor_id], references: [id])
+
+  @@unique([investor_id, fund_id, date])
+  @@index([agent_id, date])
+  @@index([fund_id, date])
+}
+
+model bank_branchs {
+  id             Int              @id @default(autoincrement())
+  name           String
+  code           String           @unique
+  bank_id        Int
+  created_at     DateTime         @default(now())
+  updated_at     DateTime
+  banks          banks            @relation(fields: [bank_id], references: [id])
+  fund_banks     fund_banks[]
+  investor_banks investor_banks[]
+}
+
+model banks {
+  id                Int                 @id @default(autoincrement())
+  name              String
+  code              String              @unique
+  logo              String?
+  is_active         Boolean
+  bi_code           String?
+  created_at        DateTime            @default(now())
+  updated_at        DateTime
+  bank_branchs      bank_branchs[]
+  fund_banks        fund_banks[]
+  investor_banks    investor_banks[]
+  transaction_banks transaction_banks[]
+}
+
+model fund_allocations {
+  id                 Int      @id @default(autoincrement())
+  fund_id            Int
+  fund_asset_type_id Int
+  allocation         Float
+  created_at         DateTime @default(now())
+  updated_at         DateTime
+  funds              funds    @relation(fields: [fund_id], references: [id])
+}
+
+model fund_banks {
+  id             Int           @id @default(autoincrement())
+  fund_id        Int
+  bank_id        Int
+  bank_branch_id Int?
+  account_number String
+  account_name   String
+  is_primary     Boolean       @default(false)
+  created_at     DateTime      @default(now())
+  updated_at     DateTime
+  bank_branchs   bank_branchs? @relation(fields: [bank_branch_id], references: [id])
+  banks          banks         @relation(fields: [bank_id], references: [id])
+  funds          funds         @relation(fields: [fund_id], references: [id])
+}
+
+model fund_documents {
+  id                    Int       @id @default(autoincrement())
+  fund_id               Int
+  fund_document_type_id Int
+  url                   String
+  date                  DateTime?
+  created_at            DateTime  @default(now())
+  updated_at            DateTime
+  funds                 funds     @relation(fields: [fund_id], references: [id])
+}
+
+model fund_navs {
+  id               BigInt   @id @default(autoincrement())
+  fund_id          Int
+  date             DateTime @db.Date
+  nav              Decimal  @db.Decimal(30, 4)
+  nav_per_unit     Decimal  @db.Decimal(30, 4)
+  outstanding_unit Decimal  @db.Decimal(30, 4)
+  created_at       DateTime @default(now())
+  updated_at       DateTime
+  funds            funds    @relation(fields: [fund_id], references: [id])
+
+  @@unique([fund_id, date])
+  @@index([fund_id, date])
+}
+
+model funds {
+  id                        Int                  @id @default(autoincrement())
+  name                      String
+  code                      String               @unique
+  ksei_code                 String?
+  external_code             String?              @unique
+  color                     String?
+  fund_category_id          String
+  max_red_percentage        Float
+  max_switch_percentage     Float
+  max_unit_issued           Float
+  min_red                   Float
+  min_sub                   Float
+  min_swin                  Float
+  min_swout                 Float
+  recommend_sub             Json?
+  recommend_red             Json?
+  recommend_switch          Json?
+  sub_settlement_days       Int                  @default(0)
+  red_settlement_days       Int                  @default(0)
+  switching_settlement_days Int                  @default(0)
+  min_rest_red              MinRestType          @default(AMOUNT)
+  min_rest_red_amount       Float
+  min_rest_switch           MinRestType          @default(AMOUNT)
+  min_rest_switch_amount    Float
+  initial_nav               Decimal              @db.Decimal(30, 4)
+  initial_unit              Decimal              @db.Decimal(30, 4)
+  initial_nav_per_unit      Decimal              @db.Decimal(30, 4)
+  max_investors             Int                  @default(0)
+  max_hold                  Int                  @default(0)
+  max_hold_amount           Float                @default(0)
+  unit_precision            Int                  @default(4)
+  management_fee_rate       Decimal              @db.Decimal(10, 4)
+  valuation_basis           Int                  @default(365)
+  start_date                DateTime
+  end_date                  DateTime?
+  can_switch_to             String               @default("all")
+  can_switch_to_list        Json?
+  fee_sub                   Float
+  fee_red                   Float
+  fee_swin                  Float
+  fee_swout                 Float
+  is_active                 Boolean
+  is_public                 Boolean
+  is_syaria                 Boolean
+  desc                      String?
+  policy                    String?
+  strategy                  String?
+  goals                     String?
+  can_redeem                Boolean
+  can_subscript             Boolean
+  can_switch                Boolean
+  created_at                DateTime             @default(now())
+  updated_at                DateTime
+  version                   Int                  @default(1)
+  aum_investor_daily        aum_investor_daily[]
+  fund_allocations          fund_allocations[]
+  fund_banks                fund_banks[]
+  fund_documents            fund_documents[]
+  fund_navs                 fund_navs[]
+  investor_accounts         investor_accounts[]
+  investor_holdings         investor_holdings[]
+}
+
+model holidays {
+  id         Int      @id @default(autoincrement())
+  name       String
+  date       DateTime @unique @db.Date
+  created_at DateTime @default(now())
+  updated_at DateTime
+}
+
+model http_logs {
+  id         Int      @id @default(autoincrement())
+  ip_address String
+  user_agent String
+  method     String
+  path       String
+  status     Int
+  error      String?
+  request    Json
+  response   Json?
+  duration   Int      @default(0)
+  created_at DateTime @default(now())
+  updated_at DateTime
+}
+
+model investor_accounts {
+  id                Int                 @id @default(autoincrement())
+  investor_id       String
+  fund_id           Int
+  account_number    String
+  created_at        DateTime            @default(now())
+  updated_at        DateTime
+  funds             funds               @relation(fields: [fund_id], references: [id])
+  investors         investors           @relation(fields: [investor_id], references: [id])
+  investor_holdings investor_holdings[]
+
+  @@unique([investor_id, fund_id])
+}
+
+model investor_addresses {
+  id               Int       @id @default(autoincrement())
+  address_type_id  String
+  investor_id      String
+  province_id      String
+  postal_code      String?
+  address          String
+  address_line_2   String?
+  created_at       DateTime  @default(now())
+  updated_at       DateTime
+  city_text        String?
+  district_text    String?
+  province_text    String?
+  subdistrict_text String?
+  investors        investors @relation(fields: [investor_id], references: [id])
+  provinces        provinces @relation(fields: [province_id], references: [id])
+}
+
+model investor_auth_contacts {
+  id              Int       @id @default(autoincrement())
+  investor_id     String
+  auth_contact_id Int
+  full_name       String
+  phone_number    String?
+  email           String?
+  birth_date      DateTime? @db.Date
+  address         String?
+}
+
+model investor_banks {
+  id             Int           @id @default(autoincrement())
+  investor_id    String
+  bank_id        Int
+  bank_branch_id Int?
+  account_number String
+  account_name   String
+  is_active      Boolean       @default(true)
+  is_primary     Boolean       @default(false)
+  created_at     DateTime      @default(now())
+  updated_at     DateTime
+  bank_branchs   bank_branchs? @relation(fields: [bank_branch_id], references: [id])
+  banks          banks         @relation(fields: [bank_id], references: [id])
+  investors      investors     @relation(fields: [investor_id], references: [id])
+}
+
+model investor_corporates {
+  id                 Int       @id @default(autoincrement())
+  investor_id        String    @unique
+  tax_number         String
+  reg_date           DateTime
+  siup               String
+  tdp_number         String
+  tdp_reg_date       DateTime
+  skd_reg_date       DateTime
+  establish_date     DateTime
+  phone_number       String
+  fax_number         String
+  corporate_legal_id String
+  created_at         DateTime  @default(now())
+  updated_at         DateTime
+  investors          investors @relation(fields: [investor_id], references: [id])
+}
+
+model investor_heirs {
+  id          Int       @id @default(autoincrement())
+  investor_id String
+  name        String
+  relation_id String
+  created_at  DateTime  @default(now())
+  updated_at  DateTime
+  investors   investors @relation(fields: [investor_id], references: [id])
+}
+
+model investor_holdings {
+  id                  Int               @id @default(autoincrement())
+  investor_id         String
+  investor_account_id Int
+  transaction_id      Int               @unique
+  fund_id             Int
+  units_before        Decimal           @db.Decimal(30, 4)
+  units_after         Decimal           @db.Decimal(30, 4)
+  delta_units         Decimal           @db.Decimal(30, 4)
+  created_at          DateTime          @default(now())
+  updated_at          DateTime
+  funds               funds             @relation(fields: [fund_id], references: [id])
+  investor_accounts   investor_accounts @relation(fields: [investor_account_id], references: [id])
+  investors           investors         @relation(fields: [investor_id], references: [id])
+  transactions        transactions      @relation(fields: [transaction_id], references: [id])
+}
+
+model investor_individuals {
+  id                 Int       @id @default(autoincrement())
+  investor_id        String    @unique
+  birth_date         DateTime
+  birth_place        String
+  mother_name        String
+  is_employee        Boolean
+  tax_number         String
+  tax_effective_date DateTime
+  gender_id          String
+  education_id       String
+  card_type_id       String
+  card_number        String
+  income_id          String
+  income_source_id   String
+  marital_id         String
+  nationality_id     String
+  job_id             String
+  job_category_id    String
+  job_role_id        String
+  created_at         DateTime  @default(now())
+  updated_at         DateTime
+  investors          investors @relation(fields: [investor_id], references: [id])
+}
+
+model investors {
+  id                   String                @id
+  external_code        String?               @unique
+  first_name           String                @db.VarChar(128)
+  middle_name          String?               @db.VarChar(128)
+  last_name            String?               @db.VarChar(128)
+  email                String?
+  phone_number         String?               @db.VarChar(32)
+  risk_level_id        Int?
+  risk_point           Int?
+  sid                  String?               @unique
+  investor_type_id     String
+  version              Int                   @default(1)
+  created_at           DateTime              @default(now())
+  updated_at           DateTime
+  agent_investors      agent_investors[]
+  aum_investor_daily   aum_investor_daily[]
+  investor_accounts    investor_accounts[]
+  investor_addresses   investor_addresses[]
+  investor_banks       investor_banks[]
+  investor_corporates  investor_corporates?
+  investor_heirs       investor_heirs[]
+  investor_holdings    investor_holdings[]
+  investor_individuals investor_individuals?
+  risk_levels          risk_levels?          @relation(fields: [risk_level_id], references: [id])
+  transactions         transactions[]
+}
+
+model journal_details {
+  id         Int      @id @default(autoincrement())
+  journal_id Int      @unique
+  old_value  Json?
+  new_value  Json?
+  created_at DateTime @default(now())
+  updated_at DateTime
+  journals   journals @relation(fields: [journal_id], references: [id])
+}
+
+model journals {
+  id                                 Int              @id @default(autoincrement())
+  entity                             String
+  entity_id                          String?
+  action                             ActionType
+  status                             ApprovalStatus
+  requested_by                       String
+  requested_at                       DateTime
+  reason                             String?
+  approved_by                        String?
+  approved_at                        DateTime?
+  rejection_reason                   String?
+  applied_at                         DateTime?
+  entity_version                     Int              @default(1)
+  created_at                         DateTime         @default(now())
+  updated_at                         DateTime
+  journal_details                    journal_details?
+  users_journals_approved_byTousers  users?           @relation("journals_approved_byTousers", fields: [approved_by], references: [id])
+  users_journals_requested_byTousers users            @relation("journals_requested_byTousers", fields: [requested_by], references: [id])
+
+  @@index([entity, entity_id, action])
+}
+
+model permissions {
+  id               Int                @id @default(autoincrement())
+  name             String             @unique
+  created_at       DateTime           @default(now())
+  updated_at       DateTime
+  role_permissions role_permissions[]
+}
+
+model provinces {
+  id                 String               @id
+  parent_id          String?
+  no                 Int?
+  name               String
+  postal_code        String?
+  type               String
+  created_at         DateTime             @default(now())
+  updated_at         DateTime
+  investor_addresses investor_addresses[]
+  provinces          provinces?           @relation("provincesToprovinces", fields: [parent_id], references: [id])
+  other_provinces    provinces[]          @relation("provincesToprovinces")
+}
+
+model references {
+  id             Int      @id @default(autoincrement())
+  code           String
+  name           String
+  created_at     DateTime @default(now())
+  updated_at     DateTime
+  reference_name String
+
+  @@unique([reference_name, code])
+  @@index([reference_name, code])
+}
+
+model risk_levels {
+  id         Int         @id @default(autoincrement())
+  name       String      @unique
+  created_at DateTime    @default(now())
+  updated_at DateTime
+  investors  investors[]
+}
+
+model role_permissions {
+  id            Int         @id @default(autoincrement())
+  role_id       Int
+  permission_id Int
+  created_at    DateTime    @default(now())
+  updated_at    DateTime
+  permissions   permissions @relation(fields: [permission_id], references: [id])
+  roles         roles       @relation(fields: [role_id], references: [id])
+
+  @@unique([permission_id, role_id])
+}
+
+model roles {
+  id               Int                @id @default(autoincrement())
+  name             String             @unique
+  created_at       DateTime           @default(now())
+  updated_at       DateTime
+  color            String?
+  description      String?
+  role_permissions role_permissions[]
+  user_roles       user_roles[]
+}
+
+model sessions {
+  id           String   @id
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  users        users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model transaction_banks {
+  id             Int          @id @default(autoincrement())
+  transaction_id Int
+  bank_id        Int
+  bank_branch_id Int?
+  account_number String
+  account_name   String
+  created_at     DateTime     @default(now())
+  updated_at     DateTime
+  banks          banks        @relation(fields: [bank_id], references: [id])
+  transactions   transactions @relation(fields: [transaction_id], references: [id])
+
+  @@unique([transaction_id, bank_id])
+}
+
+model transactions {
+  id                    Int                 @id @default(autoincrement())
+  external_code         String?             @unique
+  transaction_type      TransactionType
+  investor_id           String
+  investor_account_id   Int
+  fund_id               Int
+  agent_id              Int
+  reference_no          String?
+  transaction_date      DateTime
+  nav_date              DateTime            @db.Date
+  nav_per_unit          Decimal             @db.Decimal(30, 4)
+  units                 Decimal             @db.Decimal(30, 4)
+  settlement_date       DateTime            @db.Date
+  amount                Decimal             @db.Decimal(30, 4)
+  net_amount            Decimal             @db.Decimal(30, 4)
+  fee                   Decimal             @db.Decimal(30, 4)
+  is_redeem_all         Boolean             @default(false)
+  source_transaction_id Int?
+  payment_method_id     String
+  remarks               String?
+  created_at            DateTime            @default(now())
+  updated_at            DateTime
+  investor_holdings     investor_holdings?
+  transaction_banks     transaction_banks[]
+  investors             investors           @relation(fields: [investor_id], references: [id])
+}
+
+model user_roles {
+  id         Int      @id @default(autoincrement())
+  user_id    String
+  role_id    Int
+  created_at DateTime @default(now())
+  updated_at DateTime
+  roles      roles    @relation(fields: [role_id], references: [id])
+  users      users    @relation(fields: [user_id], references: [id])
+
+  @@unique([user_id, role_id])
+}
+
+model users {
+  id                                    String       @id
+  name                                  String?      @db.VarChar(128)
+  username                              String?      @unique
+  password                              String?      @db.VarChar(128)
+  created_at                            DateTime     @default(now())
+  updated_at                            DateTime
+  avatar                                String?
+  email                                 String?      @unique
+  is_active                             Boolean      @default(true)
+  phone_number                          String?      @db.VarChar(32)
+  emailVerified                         DateTime?
+  accounts                              accounts[]
+  journals_journals_approved_byTousers  journals[]   @relation("journals_approved_byTousers")
+  journals_journals_requested_byTousers journals[]   @relation("journals_requested_byTousers")
+  sessions                              sessions[]
+  user_roles                            user_roles[]
+}
+
+model verificationtokens {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum ActionType {
+  CREATE
+  UPDATE
+  DELETE
+  RESTORE
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum MinRestType {
+  UNIT
+  AMOUNT
+}
+
+enum TransactionType {
+  SUBSCRIPTION
+  REDEMPTION
+  SWITCHING_IN
+  SWITCHING_OUT
+  ADJUSTMENT_UP
+  ADJUSTMENT_DOWN
+}

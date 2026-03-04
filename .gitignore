@@ -2,3 +2,7 @@
 
 node_modules
 .nuxt
+/app/generated/prisma
+
+
+prisma/generated
