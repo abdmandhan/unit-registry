@@ -1,0 +1,38 @@
+{
+  "name": "vuetify-project",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "mcp": "ruler apply",
+    "mcp:revert": "ruler revert"
+  },
+  "dependencies": {
+    "@mdi/font": "7.4.47",
+    "@nuxtjs/i18n": "^10.2.1",
+    "@trpc/client": "^11.11.0",
+    "@trpc/server": "^11.11.0",
+    "nuxt": "^4.2.2",
+    "pinia": "^3.0.4",
+    "trpc-nuxt": "^2.0.1",
+    "vue": "^3.5.26",
+    "vuetify": "^4.0.0",
+    "vuetify-nuxt-module": "^0.19.5"
+  },
+  "devDependencies": {
+    "sass": "^1.97.1",
+    "eslint": "^9.39.2",
+    "@nuxt/eslint": "^1.12.1",
+    "eslint-config-vuetify": "^4.3.4",
+    "@intellectronica/ruler": "^0.3.18",
+    "@pinia/nuxt": "^0.11.3",
+    "tailwindcss": "^4.1.18",
+    "@nuxtjs/tailwindcss": "^7.0.0-beta.1"
+  }
+}
