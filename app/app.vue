@@ -64,6 +64,18 @@
                 </tr>
               </template>
 
+              <template #item.investor_type_id="{ item }">
+                <v-chip
+                  :color="
+                    item.investor_type_id === 'I' ? 'primary' : 'secondary'
+                  "
+                  density="compact"
+                >
+                  {{
+                    item.investor_type_id === "I" ? "Individual" : "Corporate"
+                  }}
+                </v-chip>
+              </template>
               <template #item.first_name="{ item }">
                 {{ item.first_name }}
               </template>
@@ -110,7 +122,7 @@ const queryInput = computed(() => ({
 }));
 
 const { data: investors, pending: loading } =
-  await $trpc.investors.useQuery(queryInput);
+  await $trpc.investor.list.useQuery(queryInput);
 
 const headers = ref([
   { title: "Investor Type", sortable: true, key: "investor_type_id" },

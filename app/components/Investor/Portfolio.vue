@@ -3,6 +3,9 @@
     <template #item.units_after="{ item }">
       {{ Number(item.units_after).toLocaleString() }}
     </template>
+    <template #item.modal="{ item }">
+      {{ formatCurrency(Number(item.modal ?? 0)) }}
+    </template>
     <template #item.fund.latest_nav.nav_per_unit="{ item }">
       {{ formatCurrency(Number(item.fund?.latest_nav?.nav_per_unit ?? 0)) }}
     </template>
@@ -25,12 +28,13 @@ const props = defineProps<{
   investorId: string;
 }>();
 
-const { data: portfolio } = await $trpc.portfolio.useQuery(() => ({
+const { data: portfolio } = await $trpc.investor.portfolio.useQuery(() => ({
   id: props.investorId,
 }));
 
 const headers = ref([
   { title: "Fund", sortable: true, key: "fund.code" },
+  { title: "Modal", sortable: true, key: "modal" },
   { title: "Units", sortable: true, key: "units_after" },
   { title: "Latest NAV", sortable: true, key: "fund.latest_nav.nav_per_unit" },
   { title: "Value", sortable: true, key: "value" },

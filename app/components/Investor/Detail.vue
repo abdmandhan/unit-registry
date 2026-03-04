@@ -2,11 +2,29 @@
   <v-form>
     <v-card>
       <v-card-title class="d-flex justify-space-between align-center">
-        {{ investorId }}
+        <div>
+          Investor Details
+          <v-chip
+            :color="
+              investor?.investor_type_id === 'I' ? 'primary' : 'secondary'
+            "
+            density="compact"
+          >
+            {{
+              investor?.investor_type_id === "I" ? "Individual" : "Corporate"
+            }}
+          </v-chip>
+        </div>
         <v-btn color="primary" @click="submit">SUBMIT</v-btn>
       </v-card-title>
       <v-card-text>
         <v-row density="compact">
+          <v-col cols="12" md="6">
+            <v-text-field label="ID" v-model="form.id" disabled />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field label="SID" v-model="form.sid" />
+          </v-col>
           <v-col cols="12" md="4">
             <v-text-field label="First Name" v-model="form.first_name" />
           </v-col>
@@ -15,6 +33,58 @@
           </v-col>
           <v-col cols="12" md="4">
             <v-text-field label="Last Name" v-model="form.last_name" />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field label="Email" v-model="form.email" />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field label="Phone Number" v-model="form.phone_number" />
+          </v-col>
+
+          {{ form.investor_individual }}
+
+          <!-- investor individual -->
+          <v-col cols="12" md="12">
+            <v-subheader>Investor Individual</v-subheader>
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field
+              label="Birth Date"
+              v-model="form.investor_individual.birth_date"
+              type="date"
+            />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field
+              label="Birth Place"
+              v-model="form.investor_individual.birth_place"
+            />
+          </v-col>
+
+          <v-col cols="12" md="6">
+            <v-text-field
+              label="Mother Name"
+              v-model="form.investor_individual.mother_name"
+            />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-switch
+              label="Is Employee"
+              v-model="form.investor_individual.is_employee"
+            />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field
+              label="Tax Number"
+              v-model="form.investor_individual.tax_number"
+            />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field
+              label="Tax Effective Date"
+              v-model="form.investor_individual.tax_effective_date"
+              type="date"
+            />
           </v-col>
         </v-row>
       </v-card-text>
@@ -52,6 +122,7 @@ const props = defineProps<{
 }>();
 
 const form = reactive({
+  id: "",
   first_name: "",
   middle_name: "",
   last_name: "",
@@ -62,9 +133,19 @@ const form = reactive({
   sid: "",
   investor_type_id: "",
   version: 1,
+
+  investor_individual: {
+    birth_date: "",
+    birth_place: "",
+    mother_name: "",
+    is_employee: false,
+    tax_number: "",
+    tax_effective_date: "",
+    gender_id: "",
+  },
 });
 
-const { data: investor } = await $trpc.get.useQuery(() => ({
+const { data: investor } = await $trpc.investor.get.useQuery(() => ({
   id: props.investorId,
 }));
 
@@ -76,6 +157,7 @@ watch(
   investor,
   (newVal) => {
     console.log("investor", newVal);
+    form.id = newVal?.id ?? "";
     form.first_name = newVal?.first_name ?? "";
     form.middle_name = newVal?.middle_name ?? "";
     form.last_name = newVal?.last_name ?? "";
@@ -86,6 +168,24 @@ watch(
     form.sid = newVal?.sid ?? "";
     form.investor_type_id = newVal?.investor_type_id ?? "";
     form.version = newVal?.version ?? 1;
+
+    if (newVal?.investor_type_id === "I") {
+      form.investor_individual = {
+        birth_date:
+          new Date(newVal?.investor_individuals?.birth_date ?? "")
+            .toISOString()
+            .split("T")[0] ?? "",
+        birth_place: newVal?.investor_individuals?.birth_place ?? "",
+        mother_name: newVal?.investor_individuals?.mother_name ?? "",
+        is_employee: newVal?.investor_individuals?.is_employee ?? false,
+        tax_number: newVal?.investor_individuals?.tax_number ?? "",
+        tax_effective_date:
+          new Date(newVal?.investor_individuals?.tax_effective_date ?? "")
+            .toISOString()
+            .split("T")[0] ?? "",
+        gender_id: newVal?.investor_individuals?.gender_id ?? "",
+      };
+    }
   },
   { immediate: true, deep: true },
 );

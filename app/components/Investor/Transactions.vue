@@ -3,6 +3,23 @@
     <template #item.fund.name="{ item }">
       {{ item.fund?.name }}
     </template>
+    <template #item.transaction_type="{ item }">
+      <v-chip
+        density="compact"
+        :color="
+          item.transaction_type === 'SUBSCRIPTION'
+            ? 'green'
+            : item.transaction_type === 'REDEMPTION'
+              ? 'red'
+              : 'blue'
+        "
+      >
+        {{ item.transaction_type }}
+      </v-chip>
+    </template>
+    <template #item.amount="{ item }">
+      {{ formatCurrency(Number(item.amount ?? 0)) }}
+    </template>
   </v-data-table>
 </template>
 
@@ -13,9 +30,11 @@ const props = defineProps<{
   investorId: string;
 }>();
 
-const { data: transactions } = await $trpc.transactions.useQuery(() => ({
-  id: props.investorId,
-}));
+const { data: transactions } = await $trpc.investor.transactions.useQuery(
+  () => ({
+    id: props.investorId,
+  }),
+);
 
 const headers = ref([
   { title: "Fund", sortable: true, key: "fund.code" },

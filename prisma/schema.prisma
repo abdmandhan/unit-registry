@@ -341,14 +341,14 @@ model investor_accounts {
 }
 
 model investor_individuals {
-  id                 Int      @id @default(autoincrement())
-  investor_id        String   @unique
+  id                 Int       @id @default(autoincrement())
+  investor_id        String    @unique
   birth_date         DateTime
   birth_place        String
   mother_name        String
   is_employee        Boolean
   tax_number         String
-  tax_effective_date DateTime
+  tax_effective_date DateTime?
   gender_id          String
   education_id       String
   card_type_id       String
@@ -357,11 +357,11 @@ model investor_individuals {
   income_source_id   String
   marital_id         String
   nationality_id     String
-  job_id             String
-  job_category_id    String
-  job_role_id        String
-  created_at         DateTime @default(now())
-  updated_at         DateTime @updatedAt
+  job_id             String?
+  job_category_id    String?
+  job_role_id        String?
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
 
   investor investors @relation(fields: [investor_id], references: [id])
 }
