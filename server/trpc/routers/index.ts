@@ -131,7 +131,7 @@ export const appRouter = createTRPCRouter({
             return {
                 items: items.map((row) => ({
                     id: row.id,
-                    name: [row.first_name, row.middle_name, row.last_name].filter(Boolean).join(" "),
+                    first_name: [row.first_name, row.middle_name, row.last_name].filter(Boolean).join(" "),
                     email: row.email ?? undefined,
                     phone_number: row.phone_number ?? undefined,
                     investor_type_id: row.investor_type_id,
@@ -319,6 +319,23 @@ export const appRouter = createTRPCRouter({
                 };
             });
         }),
+    transactions: baseProcedure
+        .input(z.object({ id: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const transactions = await prisma.transactions.findMany({
+                where: { investor_id: input.id },
+                include: {
+                    fund: {
+                        select: {
+                            id: true,
+                            name: true,
+                            code: true,
+                        }
+                    }
+                }
+            });
+            return transactions;
+        }),
     journals: baseProcedure
         .input(
             z.object({
@@ -348,9 +365,9 @@ export const appRouter = createTRPCRouter({
                     skip,
                     take: limit,
                     include: {
-                        users_journals_requested_byTousers: { select: { id: true, name: true } },
-                        users_journals_approved_byTousers: { select: { id: true, name: true } },
-                        journal_details: true,
+                        requested_user: { select: { id: true, name: true } },
+                        approved_user: { select: { id: true, name: true } },
+                        journal_detail: true,
                     },
                 }),
                 prisma.journals.count({ where }),
@@ -383,7 +400,7 @@ export const appRouter = createTRPCRouter({
         .mutation(async ({ ctx, input }) => {
             const journal = await prisma.journals.findUnique({
                 where: { id: input.journalId },
-                include: { journal_details: true },
+                include: { journal_detail: true },
             });
 
             if (!journal) {
@@ -417,7 +434,7 @@ export const appRouter = createTRPCRouter({
                 throw new Error("Journal is stale and has been rejected. Please resubmit from latest data.");
             }
 
-            const detail = journal.journal_details;
+            const detail = journal.journal_detail;
             const newValue = (detail?.new_value ?? {}) as Prisma.JsonObject;
             const updateData: Prisma.investorsUpdateInput = {};
 

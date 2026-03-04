@@ -64,8 +64,8 @@
                 </tr>
               </template>
 
-              <template #item.name="{ item }">
-                {{ item.name }}
+              <template #item.first_name="{ item }">
+                {{ item.first_name }}
               </template>
             </v-data-table-server>
           </v-card-text>
@@ -88,7 +88,7 @@ const { $trpc } = useNuxtApp();
 const page = ref(1);
 const pageSize = ref(10);
 const sortBy = ref<{ key: string; order: "desc" | "asc" }[]>([
-  { key: "id", order: "desc" },
+  { key: "aum", order: "desc" },
 ]);
 const selectedInvestor = ref<string | null>(null);
 const searchs = ref({
@@ -114,7 +114,7 @@ const { data: investors, pending: loading } =
 
 const headers = ref([
   { title: "Investor Type", sortable: true, key: "investor_type_id" },
-  { title: "Full Name", sortable: true, key: "name" },
+  { title: "Full Name", sortable: true, key: "first_name" },
   { title: "SID", sortable: true, key: "sid" },
   { title: "Email", sortable: true, key: "email" },
   { title: "AUM", sortable: true, key: "aum" },
