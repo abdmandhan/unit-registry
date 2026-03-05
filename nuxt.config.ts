@@ -11,6 +11,13 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     'nuxt-auth-utils'
   ],
+  plugins: [
+    {
+      src: '~/plugins/apexcharts.client.ts',
+      mode: 'client'
+    }
+
+  ],
 
   eslint: {
     config: {

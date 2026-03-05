@@ -1,6 +1,18 @@
 <template>
   <v-layout class="rounded-md border">
-    <v-app-bar title="Qiblat Unit Registry"></v-app-bar>
+    <v-app-bar title="Qiblat Unit Registry">
+      <template #append>
+        <v-btn @click="theme.toggle()" icon>
+          <v-icon>
+            {{
+              theme.global.name.value === "dark"
+                ? "mdi-weather-night"
+                : "mdi-weather-sunny"
+            }}
+          </v-icon>
+        </v-btn>
+      </template>
+    </v-app-bar>
 
     <v-navigation-drawer>
       <v-list nav>
@@ -33,8 +45,10 @@
 </template>
 
 <script lang="ts" setup>
-const { clear } = useUserSession();
+import { useTheme } from "vuetify";
+const theme = useTheme();
 
+const { clear } = useUserSession();
 const menus = [
   {
     title: "Dashboard",

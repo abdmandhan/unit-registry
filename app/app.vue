@@ -1,5 +1,5 @@
 <template>
-  <v-theme-provider theme="dark">
+  <v-theme-provider>
     <v-app>
       <v-defaults-provider
         :defaults="{
