@@ -30,7 +30,7 @@
                   }}
                 </v-chip>
               </div>
-              <v-btn color="primary" @click="submit">SAVE</v-btn>
+              <v-btn color="primary" @click="save">SAVE</v-btn>
             </div>
             <v-row density="compact">
               <v-col cols="12" md="6">
@@ -38,6 +38,13 @@
               </v-col>
               <v-col cols="12" md="6">
                 <v-text-field label="SID" v-model="form.sid" />
+              </v-col>
+              <v-col cols="12" md="12">
+                <v-text-field
+                  label="Full Name"
+                  v-model="form.full_name"
+                  disabled
+                />
               </v-col>
               <v-col cols="12" md="4">
                 <v-text-field label="First Name" v-model="form.first_name" />
@@ -215,6 +222,7 @@ const props = defineProps<{
 
 const form = reactive({
   id: "",
+  full_name: "",
   first_name: "",
   middle_name: "",
   last_name: "",
@@ -285,6 +293,7 @@ watch(
   (newVal) => {
     console.log("investor", newVal);
     form.id = newVal?.id ?? "";
+    form.full_name = newVal?.full_name ?? "";
     form.first_name = newVal?.first_name ?? "";
     form.middle_name = newVal?.middle_name ?? "";
     form.last_name = newVal?.last_name ?? "";
@@ -325,7 +334,7 @@ watch(
   { immediate: true, deep: true },
 );
 
-const submit = () => {
+const save = () => {
   console.log("submit");
 };
 </script>
