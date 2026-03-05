@@ -1,97 +1,105 @@
 <template>
-  <v-app>
-    <v-main>
-      <v-container>
-        <v-card>
-          <v-card-title> Investors </v-card-title>
-          <v-card-text>
-            <v-data-table-server
-              v-model:items-per-page="pageSize"
-              :headers="headers"
-              :items="investors?.items ?? []"
-              :items-length="investors?.total ?? 0"
-              :loading="loading"
-              v-model:page="page"
-              density="compact"
-              v-model:sort-by="sortBy"
-              show-select
-              select-strategy="single"
-              item-value="id"
-              v-model="selectedInvestor"
-            >
-              <template #body.prepend>
-                <tr>
-                  <td></td>
-                  <td>
-                    <v-select
-                      density="compact"
-                      :hide-details="true"
-                      item-title="text"
-                      item-value="value"
-                      :items="[
-                        { text: 'All', value: '' },
-                        { text: 'Individual', value: 'I' },
-                        { text: 'Corporate', value: 'C' },
-                      ]"
-                      v-model="searchs.investor_type_id"
-                    >
-                    </v-select>
-                  </td>
-                  <td>
-                    <v-text-field
-                      density="compact"
-                      :hide-details="true"
-                      v-model="searchs.full_name"
-                    ></v-text-field>
-                  </td>
-                  <td>
-                    <v-text-field
-                      density="compact"
-                      :hide-details="true"
-                      v-model="searchs.sid"
-                    ></v-text-field>
-                  </td>
-
-                  <td>
-                    <v-text-field
-                      density="compact"
-                      :hide-details="true"
-                      v-model="searchs.email"
-                      type="email"
-                    />
-                  </td>
-                  <td></td>
-                </tr>
-              </template>
-
-              <template #item.investor_type_id="{ item }">
-                <v-chip
-                  :color="
-                    item.investor_type_id === 'I' ? 'primary' : 'secondary'
-                  "
-                  density="compact"
+  <v-theme-provider theme="dark">
+    <v-app>
+      <v-defaults-provider
+        :defaults="{
+          VSelect: { density: 'compact' },
+          VDataTable: { density: 'compact' },
+          VDataTableServer: { density: 'compact' },
+          VTextField: { density: 'compact' },
+        }"
+      >
+        <v-main>
+          <v-container>
+            <v-card>
+              <v-card-title> Investors </v-card-title>
+              <v-card-text>
+                <v-data-table-server
+                  v-model:items-per-page="pageSize"
+                  :headers="headers"
+                  :items="investors?.items ?? []"
+                  :items-length="investors?.total ?? 0"
+                  :loading="loading"
+                  v-model:page="page"
+                  v-model:sort-by="sortBy"
+                  show-select
+                  select-strategy="single"
+                  item-value="id"
+                  v-model="selectedInvestor"
                 >
-                  {{
-                    item.investor_type_id === "I" ? "Individual" : "Corporate"
-                  }}
-                </v-chip>
-              </template>
-              <template #item.full_name="{ item }">
-                {{ item.full_name }}
-              </template>
-            </v-data-table-server>
-          </v-card-text>
-        </v-card>
-      </v-container>
-      <v-container>
-        <!-- selected investor -->
-        <InvestorDetail
-          v-if="Number(selectedInvestor?.length) > 0"
-          :investor-id="selectedInvestor?.[0] ?? ''"
-        />
-      </v-container>
-    </v-main>
-  </v-app>
+                  <template #body.prepend>
+                    <tr>
+                      <td></td>
+                      <td>
+                        <v-select
+                          :hide-details="true"
+                          item-title="text"
+                          item-value="value"
+                          :items="[
+                            { text: 'All', value: '' },
+                            { text: 'Individual', value: 'I' },
+                            { text: 'Corporate', value: 'C' },
+                          ]"
+                          v-model="searchs.investor_type_id"
+                        >
+                        </v-select>
+                      </td>
+                      <td>
+                        <v-text-field
+                          :hide-details="true"
+                          v-model="searchs.full_name"
+                        />
+                      </td>
+                      <td>
+                        <v-text-field
+                          :hide-details="true"
+                          v-model="searchs.sid"
+                        />
+                      </td>
+
+                      <td>
+                        <v-text-field
+                          :hide-details="true"
+                          v-model="searchs.email"
+                          type="email"
+                        />
+                      </td>
+                      <td></td>
+                    </tr>
+                  </template>
+
+                  <template #item.investor_type_id="{ item }">
+                    <v-chip
+                      :color="
+                        item.investor_type_id === 'I' ? 'primary' : 'secondary'
+                      "
+                      density="compact"
+                    >
+                      {{
+                        item.investor_type_id === "I"
+                          ? "Individual"
+                          : "Corporate"
+                      }}
+                    </v-chip>
+                  </template>
+                  <template #item.full_name="{ item }">
+                    {{ item.full_name }}
+                  </template>
+                </v-data-table-server>
+              </v-card-text>
+            </v-card>
+          </v-container>
+          <v-container>
+            <!-- selected investor -->
+            <InvestorDetail
+              v-if="Number(selectedInvestor?.length) > 0"
+              :investor-id="selectedInvestor?.[0] ?? ''"
+            />
+          </v-container>
+        </v-main>
+      </v-defaults-provider>
+    </v-app>
+  </v-theme-provider>
 </template>
 
 <script lang="ts" setup>

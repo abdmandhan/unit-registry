@@ -1,5 +1,5 @@
 <template>
-  <v-data-table :headers="headers" :items="portfolio" density="compact">
+  <v-data-table :headers="headers" :items="portfolio">
     <template #item.units_after="{ item }">
       {{ Number(item.units_after).toLocaleString() }}
     </template>
