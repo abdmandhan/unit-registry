@@ -10,13 +10,12 @@
           VSwitch: { density: 'compact', color: 'primary' },
         }"
       >
-        <v-main>
+        <NuxtLayout>
           <NuxtPage />
-        </v-main>
+        </NuxtLayout>
       </v-defaults-provider>
     </v-app>
   </v-theme-provider>
 </template>
 
-<script lang="ts" setup>
-</script>
+<script lang="ts" setup></script>

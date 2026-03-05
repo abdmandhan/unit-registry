@@ -1,15 +1,15 @@
 <template>
-  <v-container class="d-flex justify-center align-center" style="min-height: 100vh">
+  <v-container
+    class="d-flex justify-center align-center"
+    style="min-height: 100vh"
+  >
     <v-card max-width="420" class="w-100">
       <v-card-title class="text-h6">Sign in</v-card-title>
-      <v-card-subtitle>Use your username or email and password.</v-card-subtitle>
+      <v-card-subtitle
+        >Use your username or email and password.</v-card-subtitle
+      >
       <v-card-text>
-        <v-alert
-          v-if="error"
-          type="error"
-          density="compact"
-          class="mb-4"
-        >
+        <v-alert v-if="error" type="error" density="compact" class="mb-4">
           {{ error }}
         </v-alert>
 
@@ -35,12 +35,7 @@
             required
           />
 
-          <v-btn
-            type="submit"
-            color="primary"
-            block
-            :loading="loading"
-          >
+          <v-btn type="submit" color="primary" block :loading="loading">
             Login
           </v-btn>
         </v-form>
@@ -50,6 +45,9 @@
 </template>
 
 <script lang="ts" setup>
+definePageMeta({
+  layout: "guest",
+});
 const username = ref("");
 const password = ref("");
 const loading = ref(false);
@@ -82,4 +80,3 @@ async function onSubmit() {
   }
 }
 </script>
-
