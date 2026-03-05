@@ -13,10 +13,14 @@
       {{ formatCurrency(Number(item.value ?? 0)) }}
     </template>
     <template #item.profit_and_loss="{ item }">
-      {{ formatCurrency(Number(item.profit_and_loss ?? 0)) }}
+      <div :class="item.profit_and_loss > 0 ? 'text-green' : 'text-red'">
+        {{ formatCurrency(Number(item.profit_and_loss ?? 0)) }}
+      </div>
     </template>
     <template #item.return_pct="{ item }">
-      {{ item.return_pct.toFixed(2) }}%
+      <div :class="item.return_pct > 0 ? 'text-green' : 'text-red'">
+        {{ item.return_pct.toFixed(2) }}%
+      </div>
     </template>
   </v-data-table>
 </template>

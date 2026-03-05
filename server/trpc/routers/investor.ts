@@ -73,13 +73,7 @@ export const investorRouter = createTRPCRouter({
                 for (const search of input.searchs) {
                     if (search.value) {
                         where.OR = [];
-                        if (search.key == 'name') {
-                            where.OR.push({ first_name: { contains: search.value, mode: "insensitive" } });
-                            where.OR.push({ middle_name: { contains: search.value, mode: "insensitive" } });
-                            where.OR.push({ last_name: { contains: search.value, mode: "insensitive" } });
-                        } else {
-                            where.OR.push({ [search.key]: { contains: search.value, mode: "insensitive" } });
-                        }
+                        where.OR.push({ [search.key]: { contains: search.value, mode: "insensitive" } });
                     }
                 }
             }
@@ -120,7 +114,7 @@ export const investorRouter = createTRPCRouter({
             return {
                 items: items.map((row) => ({
                     id: row.id,
-                    first_name: [row.first_name, row.middle_name, row.last_name].filter(Boolean).join(" "),
+                    full_name: row.full_name,
                     email: row.email ?? undefined,
                     phone_number: row.phone_number ?? undefined,
                     investor_type_id: row.investor_type_id,
@@ -246,7 +240,7 @@ export const investorRouter = createTRPCRouter({
             const fundIds = portfolio.map((p) => p.fund_id);
             if (fundIds.length === 0) return [];
 
-            const [funds, modalByFundRows] = await Promise.all([
+            const [funds, moneyInByFund, moneyOutByFund] = await Promise.all([
                 prisma.funds.findMany({
                     where: { id: { in: fundIds } },
                     select: {
@@ -269,12 +263,31 @@ export const investorRouter = createTRPCRouter({
                     },
                     _sum: { net_amount: true },
                 }),
+                prisma.transactions.groupBy({
+                    by: ["fund_id"],
+                    where: {
+                        investor_id: input.id,
+                        fund_id: { in: fundIds },
+                        transaction_type: { in: ["REDEMPTION", "SWITCHING_OUT"] },
+                    },
+                    _sum: { net_amount: true },
+                }),
             ]);
 
             const fundMap = new Map(funds.map((f) => [f.id, f]));
-            const modalByFund = new Map(
-                modalByFundRows.map((r) => [r.fund_id, toNum(r._sum.net_amount)])
+            const moneyInMap = new Map(
+                moneyInByFund.map((r) => [r.fund_id, toNum(r._sum.net_amount)])
             );
+            const moneyOutMap = new Map(
+                moneyOutByFund.map((r) => [r.fund_id, toNum(r._sum.net_amount)])
+            );
+            // Net modal = amount invested minus amount redeemed (real cost basis of current holdings)
+            const modalByFund = new Map<number, number>();
+            for (const fundId of fundIds) {
+                const in_ = moneyInMap.get(fundId) ?? 0;
+                const out_ = moneyOutMap.get(fundId) ?? 0;
+                modalByFund.set(fundId, Math.max(0, in_ - out_));
+            }
 
             return portfolio.map((p) => {
                 const fund = fundMap.get(p.fund_id);
@@ -309,10 +322,18 @@ export const investorRouter = createTRPCRouter({
             });
         }),
     transactions: baseProcedure
-        .input(z.object({ id: z.string() }))
+        .input(z.object({
+            id: z.string(),
+            fundId: z.number().optional(),
+            transactionType: z.enum(["SUBSCRIPTION", "REDEMPTION", "SWITCHING_IN", "SWITCHING_OUT"]).optional(),
+        }))
         .query(async ({ ctx, input }) => {
             const transactions = await prisma.transactions.findMany({
-                where: { investor_id: input.id },
+                where: {
+                    investor_id: input.id,
+                    fund_id: input.fundId ? { equals: Number(input.fundId) } : undefined,
+                    transaction_type: input.transactionType ? { equals: input.transactionType } : undefined,
+                },
                 include: {
                     fund: {
                         select: {
@@ -321,9 +342,20 @@ export const investorRouter = createTRPCRouter({
                             code: true,
                         }
                     }
-                }
+                },
+                orderBy: { transaction_date: "desc" }
             });
             return transactions;
+        }),
+    transactionFunds: baseProcedure
+        .input(z.object({ id: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const funds = await prisma.transactions.findMany({
+                where: { investor_id: input.id },
+                distinct: ["fund_id"],
+                select: { fund_id: true, fund: { select: { id: true, name: true, code: true } } },
+            });
+            return funds;
         }),
     journals: baseProcedure
         .input(

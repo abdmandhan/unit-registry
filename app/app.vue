@@ -41,7 +41,7 @@
                     <v-text-field
                       density="compact"
                       :hide-details="true"
-                      v-model="searchs.name"
+                      v-model="searchs.full_name"
                     ></v-text-field>
                   </td>
                   <td>
@@ -76,8 +76,8 @@
                   }}
                 </v-chip>
               </template>
-              <template #item.first_name="{ item }">
-                {{ item.first_name }}
+              <template #item.full_name="{ item }">
+                {{ item.full_name }}
               </template>
             </v-data-table-server>
           </v-card-text>
@@ -104,7 +104,7 @@ const sortBy = ref<{ key: string; order: "desc" | "asc" }[]>([
 ]);
 const selectedInvestor = ref<string | null>(null);
 const searchs = ref({
-  name: "",
+  full_name: "",
   sid: "",
   investor_type_id: "",
   email: "",
@@ -126,7 +126,7 @@ const { data: investors, pending: loading } =
 
 const headers = ref([
   { title: "Investor Type", sortable: true, key: "investor_type_id" },
-  { title: "Full Name", sortable: true, key: "first_name" },
+  { title: "Full Name", sortable: true, key: "full_name" },
   { title: "SID", sortable: true, key: "sid" },
   { title: "Email", sortable: true, key: "email" },
   { title: "AUM", sortable: true, key: "aum" },

@@ -299,6 +299,7 @@ model investors {
   first_name    String  @db.VarChar(128)
   middle_name   String? @db.VarChar(128)
   last_name     String? @db.VarChar(128)
+  full_name     String  @default("") @db.VarChar(256) // first_name + middle_name + last_name -> full name for display, use for display purposes
   email         String?
   phone_number  String? @db.VarChar(32)
   risk_level_id Int?
