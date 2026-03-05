@@ -30,7 +30,7 @@
                   }}
                 </v-chip>
               </div>
-              <v-btn color="primary" @click="submit">SUBMIT</v-btn>
+              <v-btn color="primary" @click="submit">SAVE</v-btn>
             </div>
             <v-row density="compact">
               <v-col cols="12" md="6">
@@ -60,7 +60,7 @@
 
               <!-- investor individual -->
               <template v-if="form.investor_type_id === 'I'">
-                {{ form.investor_individual }}
+                <!-- {{ form.investor_individual }} -->
                 <v-col cols="12" md="12">
                   <v-subheader>Investor Individual</v-subheader>
                 </v-col>

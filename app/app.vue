@@ -3,10 +3,11 @@
     <v-app>
       <v-defaults-provider
         :defaults="{
-          VSelect: { density: 'compact' },
-          VDataTable: { density: 'compact' },
-          VDataTableServer: { density: 'compact' },
-          VTextField: { density: 'compact' },
+          VSelect: { density: 'compact', color: 'primary' },
+          VDataTable: { density: 'compact', color: 'primary' },
+          VDataTableServer: { density: 'compact', color: 'primary' },
+          VTextField: { density: 'compact', color: 'primary' },
+          VSwitch: { density: 'compact', color: 'primary' },
         }"
       >
         <v-main>
@@ -103,6 +104,8 @@
 </template>
 
 <script lang="ts" setup>
+import type { VSwitch } from "vuetify/components";
+
 const { $trpc } = useNuxtApp();
 
 const page = ref(1);

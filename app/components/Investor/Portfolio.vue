@@ -22,6 +22,18 @@
         {{ item.return_pct.toFixed(2) }}%
       </div>
     </template>
+    <template #item.overall_profit_and_loss="{ item }">
+      <div
+        :class="item.overall_profit_and_loss > 0 ? 'text-green' : 'text-red'"
+      >
+        {{ formatCurrency(Number(item.overall_profit_and_loss ?? 0)) }}
+      </div>
+    </template>
+    <template #item.overall_return_pct="{ item }">
+      <div :class="item.overall_return_pct > 0 ? 'text-green' : 'text-red'">
+        {{ item.overall_return_pct.toFixed(2) }}%
+      </div>
+    </template>
   </v-data-table>
 </template>
 
@@ -42,7 +54,13 @@ const headers = ref([
   { title: "Units", sortable: true, key: "units_after" },
   { title: "Latest NAV", sortable: true, key: "fund.latest_nav.nav_per_unit" },
   { title: "Value", sortable: true, key: "value" },
-  { title: "Profit and Loss", sortable: true, key: "profit_and_loss" },
+  { title: "PNL", sortable: true, key: "profit_and_loss" },
   { title: "Return %", sortable: true, key: "return_pct" },
+  {
+    title: "Overall PNL",
+    sortable: true,
+    key: "overall_profit_and_loss",
+  },
+  { title: "Overall Return %", sortable: true, key: "overall_return_pct" },
 ]);
 </script>

@@ -297,8 +297,15 @@ export const investorRouter = createTRPCRouter({
                 const modal = modalByFund.get(p.fund_id) ?? 0;
                 const value = units * navPerUnit;
                 const avgPrice = units > 0 ? modal / units : 0;
+                // Current P&L: gain/loss on the amount still invested
                 const profitAndLoss = value - modal;
                 const returnPct = modal > 0 ? (profitAndLoss / modal) * 100 : 0;
+
+                // Overall P&L: total gain over entire journey (all money in vs all money out + current value)
+                const totalIn = moneyInMap.get(p.fund_id) ?? 0;
+                const totalOut = moneyOutMap.get(p.fund_id) ?? 0;
+                const overallProfitAndLoss = totalIn > 0 ? totalOut + value - totalIn : 0;
+                const overallReturnPct = totalIn > 0 ? (overallProfitAndLoss / totalIn) * 100 : 0;
 
                 return {
                     fund_id: p.fund_id,
@@ -318,6 +325,10 @@ export const investorRouter = createTRPCRouter({
                     value,
                     profit_and_loss: profitAndLoss,
                     return_pct: returnPct,
+                    total_in: totalIn,
+                    total_out: totalOut,
+                    overall_profit_and_loss: overallProfitAndLoss,
+                    overall_return_pct: overallReturnPct,
                 };
             });
         }),
