@@ -3,9 +3,6 @@
     <v-card>
       <v-card-title class="d-flex justify-space-between align-center">
         <span>Investors</span>
-        <v-btn variant="text" color="secondary" size="small" @click="logout">
-          Logout
-        </v-btn>
       </v-card-title>
       <v-card-text>
         <v-data-table-server
@@ -88,7 +85,6 @@ definePageMeta({
 });
 
 const { $trpc } = useNuxtApp();
-const { clear } = useUserSession();
 
 const page = ref(1);
 const pageSize = ref(10);
@@ -124,9 +120,4 @@ const headers = ref([
   { title: "Email", sortable: true, key: "email" },
   { title: "AUM", sortable: true, key: "aum" },
 ]);
-
-async function logout() {
-  await clear();
-  await navigateTo("/login");
-}
 </script>

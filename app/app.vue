@@ -11,6 +11,7 @@
         }"
       >
         <NuxtLayout>
+          <NuxtLoadingIndicator />
           <NuxtPage />
         </NuxtLayout>
       </v-defaults-provider>

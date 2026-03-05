@@ -16,6 +16,14 @@
           </template>
         </v-list-item>
       </v-list>
+      <template #append>
+        <v-list-item @click="logout">
+          <template #prepend>
+            <v-icon>mdi-logout</v-icon>
+          </template>
+          <v-list-item-title>Logout</v-list-item-title>
+        </v-list-item>
+      </template>
     </v-navigation-drawer>
 
     <v-main class="d-flex justify-center">
@@ -25,6 +33,8 @@
 </template>
 
 <script lang="ts" setup>
+const { clear } = useUserSession();
+
 const menus = [
   {
     title: "Dashboard",
@@ -42,4 +52,9 @@ const menus = [
     to: "/transactions",
   },
 ];
+
+async function logout() {
+  await clear();
+  await navigateTo("/login");
+}
 </script>

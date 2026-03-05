@@ -6,9 +6,9 @@
           <v-card-title> Asset Under Management </v-card-title>
           <v-card-text class="flex flex-col items-start gap-4 mt-2">
             <!-- <v-icon>mdi-cash-multiple</v-icon> -->
-            <span class="font-bold text-xl">{{
-              formatCurrency(aum?.aum ?? 0)
-            }}</span>
+            <span class="font-bold text-3xl text-right">
+              {{ formatCurrency(aum?.aum ?? 0) }}
+            </span>
 
             <div class="flex gap-2 items-center">
               <v-chip color="primary" size="small">
