@@ -25,9 +25,13 @@ export default defineNuxtConfig({
     vuetifyOptions: {
       theme: {
         defaultTheme: 'light',
-      }
+      },
     },
   },
+
+  css: [
+    '~/assets/css/main.css',
+  ],
 
   // i18n: {
   //   defaultLocale: 'en',
