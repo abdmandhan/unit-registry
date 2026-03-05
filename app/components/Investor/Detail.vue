@@ -1,224 +1,202 @@
 <template>
-  <v-sheet elevation="2">
-    <v-tabs v-model="tab" color="primary">
-      <v-tab value="details">Details</v-tab>
-      <v-tab value="portfolio">Portfolio</v-tab>
-      <v-tab value="transactions">Transactions</v-tab>
-      <v-tab value="journals">Journals</v-tab>
-    </v-tabs>
+  <v-form>
+    <div class="d-flex justify-space-between align-center mb-4">
+      <div>
+        Investor Details
+        <v-chip
+          :color="investor?.investor_type_id === 'I' ? 'primary' : 'secondary'"
+          density="compact"
+        >
+          {{ investor?.investor_type_id === "I" ? "Individual" : "Corporate" }}
+        </v-chip>
+      </div>
+      <v-btn color="primary" @click="save">SAVE</v-btn>
+    </div>
+    <v-row density="compact">
+      <v-col cols="12" md="6">
+        <v-text-field label="ID" v-model="form.id" disabled />
+      </v-col>
+      <v-col cols="12" md="6">
+        <v-text-field label="SID" v-model="form.sid" />
+      </v-col>
+      <v-col cols="12" md="12">
+        <v-text-field label="Full Name" v-model="form.full_name" disabled />
+      </v-col>
+      <v-col cols="12" md="4">
+        <v-text-field label="First Name" v-model="form.first_name" />
+      </v-col>
+      <v-col cols="12" md="4">
+        <v-text-field label="Middle Name" v-model="form.middle_name" />
+      </v-col>
+      <v-col cols="12" md="4">
+        <v-text-field label="Last Name" v-model="form.last_name" />
+      </v-col>
+      <v-col cols="12" md="6">
+        <v-text-field label="Email" v-model="form.email" />
+      </v-col>
+      <v-col cols="12" md="6">
+        <v-text-field label="Phone Number" v-model="form.phone_number" />
+      </v-col>
 
-    <v-divider></v-divider>
+      <!-- investor individual -->
+      <template v-if="form.investor_type_id === 'I'">
+        <!-- {{ form.investor_individual }} -->
+        <v-col cols="12" md="12">
+          <v-subheader>Investor Individual</v-subheader>
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-text-field
+            label="Birth Date"
+            v-model="form.investor_individual.birth_date"
+            type="date"
+          />
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-text-field
+            label="Birth Place"
+            v-model="form.investor_individual.birth_place"
+          />
+        </v-col>
 
-    <v-tabs-window v-model="tab">
-      <v-tabs-window-item value="details">
-        <v-sheet class="pa-5">
-          <!-- <InvestorPortfolio :investor-id="investorId" /> -->
-          <v-form>
-            <div class="d-flex justify-space-between align-center mb-4">
-              <div>
-                Investor Details
-                <v-chip
-                  :color="
-                    investor?.investor_type_id === 'I' ? 'primary' : 'secondary'
-                  "
-                  density="compact"
-                >
-                  {{
-                    investor?.investor_type_id === "I"
-                      ? "Individual"
-                      : "Corporate"
-                  }}
-                </v-chip>
-              </div>
-              <v-btn color="primary" @click="save">SAVE</v-btn>
+        <v-col cols="12" md="6">
+          <v-text-field
+            label="Mother Name"
+            v-model="form.investor_individual.mother_name"
+          />
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-switch
+            label="Is Employee"
+            v-model="form.investor_individual.is_employee"
+          />
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-text-field
+            label="Tax Number"
+            v-model="form.investor_individual.tax_number"
+          />
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-text-field
+            label="Tax Effective Date"
+            v-model="form.investor_individual.tax_effective_date"
+            type="date"
+          />
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-select
+            label="Gender"
+            v-model="form.investor_individual.gender_id"
+            :items="genderReferences"
+            item-title="name"
+            item-value="code"
+          />
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-select
+            label="Education"
+            v-model="form.investor_individual.education_id"
+            :items="educationReferences"
+            item-title="name"
+            item-value="code"
+          />
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-select
+            label="Card Type"
+            v-model="form.investor_individual.card_type_id"
+            :items="cardTypeReferences"
+            item-title="name"
+            item-value="code"
+          />
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-text-field
+            label="Card Number"
+            v-model="form.investor_individual.card_number"
+          />
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-select
+            label="Income"
+            v-model="form.investor_individual.income_id"
+            :items="incomeReferences"
+            item-title="name"
+            item-value="code"
+          />
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-select
+            label="Income Source"
+            v-model="form.investor_individual.income_source_id"
+            :items="incomeSourceReferences"
+            item-title="name"
+            item-value="code"
+          />
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-select
+            label="Marital Status"
+            v-model="form.investor_individual.marital_id"
+            :items="maritalReferences"
+            item-title="name"
+            item-value="code"
+          />
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-select
+            label="Nationality"
+            v-model="form.investor_individual.nationality_id"
+            :items="nationalityReferences"
+            item-title="name"
+            item-value="code"
+          />
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-select
+            label="Job"
+            v-model="form.investor_individual.job_id"
+            :items="jobReferences"
+            item-title="name"
+            item-value="code"
+          />
+        </v-col>
+      </template>
+      <v-col cols="12">
+        <v-subheader>Investor Addresses</v-subheader>
+        <v-data-table
+          :items="form.investor_addresses"
+          :headers="investorAddressHeaders"
+        >
+          <template #top>
+            <div class="d-flex justify-end">
+              <v-btn color="primary" @click="addInvestorAddress">
+                <v-icon class="mr-2">mdi-plus</v-icon>
+                Add Address
+              </v-btn>
             </div>
-            <v-row density="compact">
-              <v-col cols="12" md="6">
-                <v-text-field label="ID" v-model="form.id" disabled />
-              </v-col>
-              <v-col cols="12" md="6">
-                <v-text-field label="SID" v-model="form.sid" />
-              </v-col>
-              <v-col cols="12" md="12">
-                <v-text-field
-                  label="Full Name"
-                  v-model="form.full_name"
-                  disabled
-                />
-              </v-col>
-              <v-col cols="12" md="4">
-                <v-text-field label="First Name" v-model="form.first_name" />
-              </v-col>
-              <v-col cols="12" md="4">
-                <v-text-field label="Middle Name" v-model="form.middle_name" />
-              </v-col>
-              <v-col cols="12" md="4">
-                <v-text-field label="Last Name" v-model="form.last_name" />
-              </v-col>
-              <v-col cols="12" md="6">
-                <v-text-field label="Email" v-model="form.email" />
-              </v-col>
-              <v-col cols="12" md="6">
-                <v-text-field
-                  label="Phone Number"
-                  v-model="form.phone_number"
-                />
-              </v-col>
+          </template>
 
-              <!-- investor individual -->
-              <template v-if="form.investor_type_id === 'I'">
-                <!-- {{ form.investor_individual }} -->
-                <v-col cols="12" md="12">
-                  <v-subheader>Investor Individual</v-subheader>
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    label="Birth Date"
-                    v-model="form.investor_individual.birth_date"
-                    type="date"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    label="Birth Place"
-                    v-model="form.investor_individual.birth_place"
-                  />
-                </v-col>
-
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    label="Mother Name"
-                    v-model="form.investor_individual.mother_name"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-switch
-                    label="Is Employee"
-                    v-model="form.investor_individual.is_employee"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    label="Tax Number"
-                    v-model="form.investor_individual.tax_number"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    label="Tax Effective Date"
-                    v-model="form.investor_individual.tax_effective_date"
-                    type="date"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-select
-                    label="Gender"
-                    v-model="form.investor_individual.gender_id"
-                    :items="genderReferences"
-                    item-title="name"
-                    item-value="code"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-select
-                    label="Education"
-                    v-model="form.investor_individual.education_id"
-                    :items="educationReferences"
-                    item-title="name"
-                    item-value="code"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-select
-                    label="Card Type"
-                    v-model="form.investor_individual.card_type_id"
-                    :items="cardTypeReferences"
-                    item-title="name"
-                    item-value="code"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    label="Card Number"
-                    v-model="form.investor_individual.card_number"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-select
-                    label="Income"
-                    v-model="form.investor_individual.income_id"
-                    :items="incomeReferences"
-                    item-title="name"
-                    item-value="code"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-select
-                    label="Income Source"
-                    v-model="form.investor_individual.income_source_id"
-                    :items="incomeSourceReferences"
-                    item-title="name"
-                    item-value="code"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-select
-                    label="Marital Status"
-                    v-model="form.investor_individual.marital_id"
-                    :items="maritalReferences"
-                    item-title="name"
-                    item-value="code"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-select
-                    label="Nationality"
-                    v-model="form.investor_individual.nationality_id"
-                    :items="nationalityReferences"
-                    item-title="name"
-                    item-value="code"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-select
-                    label="Job"
-                    v-model="form.investor_individual.job_id"
-                    :items="jobReferences"
-                    item-title="name"
-                    item-value="code"
-                  />
-                </v-col>
-              </template>
-            </v-row>
-          </v-form>
-        </v-sheet>
-      </v-tabs-window-item>
-      <v-tabs-window-item value="portfolio">
-        <v-sheet class="pa-5">
-          <InvestorPortfolio :investor-id="investorId" />
-        </v-sheet>
-      </v-tabs-window-item>
-      <v-tabs-window-item value="transactions">
-        <v-sheet class="pa-5">
-          <InvestorTransactions :investor-id="investorId" />
-        </v-sheet>
-      </v-tabs-window-item>
-      <v-tabs-window-item value="journals">
-        <v-sheet class="pa-5">
-          <InvestorJournal :investor-id="investorId" />
-        </v-sheet>
-      </v-tabs-window-item>
-    </v-tabs-window>
-  </v-sheet>
+          <template #item.address_type_id="{ item }">
+            {{
+              addressTypes?.find((t) => t.code === item.address_type_id)?.name
+            }}
+          </template>
+        </v-data-table>
+      </v-col>
+    </v-row>
+  </v-form>
 </template>
 
 <script lang="ts" setup>
 const { $trpc } = useNuxtApp();
-const tab = ref("details");
-
 const props = defineProps<{
   investorId: string;
 }>();
+
+const { data: investor } = await $trpc.investor.get.useQuery(() => ({
+  id: props.investorId,
+}));
 
 const form = reactive({
   id: "",
@@ -233,6 +211,29 @@ const form = reactive({
   sid: "",
   investor_type_id: "",
   version: 1,
+
+  investor_addresses: [] as {
+    address: string;
+    id: number;
+    created_at: string;
+    updated_at: string;
+    investor_id: string;
+    address_type_id: string;
+    province_id: string;
+    province_text: string | null;
+    city_text: string | null;
+    district_text: string | null;
+    subdistrict_text: string | null;
+    postal_code: string | null;
+  }[],
+  investor_heirs: [] as {
+    name: string;
+    id: number;
+    created_at: string;
+    updated_at: string;
+    investor_id: string;
+    relation_id: string;
+  }[],
 
   investor_individual: {
     birth_date: "",
@@ -253,8 +254,8 @@ const form = reactive({
   },
 });
 
-const { data: investor } = await $trpc.investor.get.useQuery(() => ({
-  id: props.investorId,
+const { data: addressTypes } = await $trpc.references.useQuery(() => ({
+  reference_name: "AddressType",
 }));
 
 const { data: genderReferences } = await $trpc.references.useQuery(() => ({
@@ -281,12 +282,6 @@ const { data: nationalityReferences } = await $trpc.references.useQuery(() => ({
 const { data: jobReferences } = await $trpc.references.useQuery(() => ({
   reference_name: "Jabatan",
 }));
-// const { data: jobCategoryReferences } = await $trpc.references.useQuery(() => ({ reference_name: "UnitAmountValidationMode" }));
-// const { data: jobRoleReferences } = await $trpc.references.useQuery(() => ({ reference_name: "ProductCategory" }));
-
-if (!investor) {
-  throw new Error("Investor not found");
-}
 
 watch(
   investor,
@@ -304,6 +299,8 @@ watch(
     form.sid = newVal?.sid ?? "";
     form.investor_type_id = newVal?.investor_type_id ?? "";
     form.version = newVal?.version ?? 1;
+    form.investor_addresses = newVal?.investor_addresses ?? [];
+    form.investor_heirs = newVal?.investor_heirs ?? [];
 
     if (newVal?.investor_type_id === "I") {
       form.investor_individual = {
@@ -336,5 +333,27 @@ watch(
 
 const save = () => {
   console.log("submit");
+};
+
+const investorAddressHeaders = ref([
+  { title: "Address", key: "address", maxWidth: 300 },
+  { title: "Address Type", key: "address_type_id" },
+  { title: "Province", key: "province_text" },
+  { title: "City", key: "city_text" },
+  { title: "District", key: "district_text" },
+  { title: "Subdistrict", key: "subdistrict_text" },
+  { title: "Postal Code", key: "postal_code" },
+]);
+
+const addInvestorAddress = () => {
+  //   form.investor_addresses.push({
+  //     address: "",
+  //     id: 0,
+  //     created_at: "",
+  //     updated_at: "",
+  //     investor_id: "",
+  //     address_type_id: "Home",
+  //     province_id: "",
+  //   });
 };
 </script>

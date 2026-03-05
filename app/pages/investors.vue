@@ -71,7 +71,7 @@
     </v-card>
 
     <v-container class="mt-4 pa-0">
-      <InvestorDetail
+      <InvestorView
         v-if="Number(selectedInvestor?.length) > 0"
         :investor-id="selectedInvestor?.[0] ?? ''"
       />

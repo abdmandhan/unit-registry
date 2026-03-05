@@ -68,21 +68,22 @@ export const dashboardRouter = createTRPCRouter({
     }),
     getTopFundsByAum: baseProcedure.query(async () => {
         const rows = await prisma.$queryRaw<
-            { fund_id: number; name: string; code: string; aum_value: number }[]
+            { fund_id: number; name: string; code: string; aum_value: number, category: string }[]
         >`
-        SELECT fund_id, f.name, f.code, SUM(aum_value) AS aum_value
+        SELECT fund_id, f.name, f.code,f.fund_category_id as category, SUM(aum_value) AS aum_value
         FROM aum_investor_daily
         JOIN funds f ON aum_investor_daily.fund_id = f.id
         WHERE date = (SELECT MAX(date) FROM aum_investor_daily)
-        GROUP BY fund_id, f.name, f.code
+        GROUP BY fund_id, f.name, f.code,f.fund_category_id
         ORDER BY aum_value DESC
-        LIMIT 5
+        LIMIT 8
     `;
 
         return rows.map((row) => ({
             fund_id: row.fund_id,
             name: row.name,
             code: row.code,
+            category: row.category,
             aum_value: Number(row.aum_value ?? 0),
         }));
     }),

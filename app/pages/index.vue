@@ -98,7 +98,11 @@
           <v-card-title>
             <div class="flex justify-between items-center">
               Top Funds by AUM
-              <v-btn variant="flat" @click="navigateTo('/funds')">
+              <v-btn
+                variant="text"
+                @click="navigateTo('/funds')"
+                color="primary"
+              >
                 See All
               </v-btn>
             </div>
@@ -108,12 +112,14 @@
               <thead>
                 <tr>
                   <th class="text-left">Code</th>
+                  <th class="text-left">Category</th>
                   <th class="text-left">AUM</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="item in topFunds" :key="item.fund_id">
                   <td>{{ item.code }}</td>
+                  <td>{{ item.category }}</td>
                   <td>{{ formatCurrency(item.aum_value) }}</td>
                 </tr>
               </tbody>
@@ -173,6 +179,7 @@
 const { $trpc } = useNuxtApp();
 const { user } = useUserSession();
 
+const theme = useTheme();
 const selectedDate = ref<Date[]>([]);
 
 const { data: aum } = await $trpc.dashboard.getAum.useQuery();
@@ -210,6 +217,9 @@ const aumChartOptions = computed(() => {
   );
 
   return {
+    theme: {
+      mode: theme.global.name.value === "dark" ? "dark" : "light",
+    },
     chart: {
       id: "aum-line",
       toolbar: { show: false },
@@ -269,7 +279,13 @@ const revenueChartOptions = computed(() => {
   );
 
   return {
+    theme: {
+      mode: theme.global.name.value === "dark" ? "dark" : "light",
+    },
     chart: {
+      theme: {
+        mode: theme.global.name.value === "dark" ? "dark" : "light",
+      },
       id: "revenue-line",
       toolbar: { show: false },
       zoom: { enabled: false },

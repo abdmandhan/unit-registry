@@ -24,7 +24,7 @@
           :active="$route.path === menu.to"
         >
           <template #prepend>
-            <v-icon>{{ menu.icon }}</v-icon>
+            <v-icon :color="menu.iconColor">{{ menu.icon }}</v-icon>
           </template>
         </v-list-item>
       </v-list>
@@ -54,16 +54,55 @@ const menus = [
     title: "Dashboard",
     icon: "mdi-view-dashboard",
     to: "/",
+    iconColor: "primary",
   },
   {
     title: "Investors",
     icon: "mdi-account-group",
     to: "/investors",
+    iconColor: "secondary",
   },
   {
     title: "Transactions",
     icon: "mdi-file-chart",
     to: "/transactions",
+    iconColor: "yellow",
+  },
+  {
+    title: "Funds",
+    icon: "mdi-bank",
+    to: "/funds",
+    iconColor: "green",
+  },
+  {
+    title: "NAVs",
+    icon: "mdi-chart-line",
+    to: "/navs",
+    iconColor: "blue",
+  },
+  {
+    title: "Agents",
+    icon: "mdi-account-group-outline",
+    to: "/agents",
+    iconColor: "purple",
+  },
+  {
+    title: "References",
+    icon: "mdi-database-settings",
+    to: "/references",
+    iconColor: "orange",
+  },
+  {
+    title: "Reporting",
+    icon: "mdi-file-chart",
+    to: "/reporting",
+    iconColor: "red",
+  },
+  {
+    title: "Settings",
+    icon: "mdi-cog",
+    to: "/settings",
+    iconColor: "gray",
   },
 ];
 
