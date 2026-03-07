@@ -38,12 +38,17 @@ export default defineEventHandler(async (event) => {
 
   await setUserSession(event, {
     user: {
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      name: user.name,
+      username: user.username ?? '',
     },
     loggedInAt: Date.now(),
+    secure: false,
+  }, {
+    maxAge: 60 * 60 * 24 * 30,
+    cookie: {
+      secure: false,
+      sameSite: 'lax',
+      httpOnly: true,
+    }
   });
 
   return { success: true };
