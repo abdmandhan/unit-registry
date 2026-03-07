@@ -7,7 +7,7 @@
       {{ formatCurrency(Number(item.modal ?? 0)) }}
     </template>
     <template #item.fund.latest_nav.nav_per_unit="{ item }">
-      {{ formatCurrency(Number(item.fund?.latest_nav?.nav_per_unit ?? 0)) }}
+      {{ Number(item.fund?.latest_nav?.nav_per_unit ?? 0) }}
     </template>
     <template #item.value="{ item }">
       {{ formatCurrency(Number(item.value ?? 0)) }}

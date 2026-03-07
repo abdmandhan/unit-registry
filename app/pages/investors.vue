@@ -99,19 +99,17 @@ const searchs = ref({
   email: "",
 });
 
-const queryInput = computed(() => ({
-  page: page.value,
-  page_size: pageSize.value,
-  sort_by: sortBy.value[0]?.key ?? "id",
-  sort_order: sortBy.value[0]?.order ?? "desc",
-  searchs: Object.entries(searchs.value).map(([key, value]) => ({
-    key,
-    value,
-  })),
-}));
-
 const { data: investors, pending: loading } =
-  await $trpc.investor.list.useQuery(queryInput);
+  await $trpc.investor.list.useQuery(() => ({
+    page: page.value,
+    page_size: pageSize.value,
+    sort_by: sortBy.value[0]?.key ?? "id",
+    sort_order: sortBy.value[0]?.order ?? "desc",
+    searchs: Object.entries(searchs.value).map(([key, value]) => ({
+      key,
+      value,
+    })),
+  }));
 
 const headers = ref([
   { title: "Investor Type", sortable: true, key: "investor_type_id" },

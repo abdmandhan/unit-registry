@@ -1,8 +1,8 @@
 <template>
   <v-container>
     <v-row>
-      <v-col cols="12" class="flex justify-between">
-        <div>Welcome back, {{ user?.username }}</div>
+      <v-col cols="12" class="flex justify-between items-center">
+        <h1 class="text-xl font-bold">Welcome, {{ user?.username }}</h1>
         <v-dialog contained max-width="382">
           <template v-slot:activator="{ props: activatorProps }">
             <v-btn v-bind="activatorProps" color="primary">
@@ -41,20 +41,18 @@
           </template>
         </v-dialog>
       </v-col>
-      <v-col cols="12" md="4">
+      <v-col cols="12" md="3" v-for="card in cards" :key="card">
         <v-card>
-          <v-card-title> Asset Under Management </v-card-title>
-          <v-card-text class="flex flex-col items-start gap-4 mt-2">
-            <!-- <v-icon>mdi-cash-multiple</v-icon> -->
-            <span class="font-bold text-3xl text-right">
-              {{ formatCurrency(aum?.aum ?? 0) }}
-            </span>
-
-            <div class="flex gap-2 items-center">
+          <v-card-title> Last AUM </v-card-title>
+          <v-card-text class="flex flex-col items-start gap-4">
+            <div class="font-bold text-2xl text-right flex items-center gap-2">
+              <!-- <v-icon>mdi-cash-multiple</v-icon> -->
+              {{ formatCurrency(aum?.aum ?? 0, 2) }}
               <v-chip
                 :color="
                   Number(aum?.aumDiffPercentage ?? 0) > 0 ? 'success' : 'error'
                 "
+                variant="elevated"
                 size="small"
               >
                 <v-icon>
@@ -64,16 +62,37 @@
                       : "mdi-arrow-down"
                   }}
                 </v-icon>
-                <span>{{ aum?.aumDiffPercentage.toFixed(2) }}%</span>
+                <span>{{ aum?.aumDiffPercentage.toFixed(0) }}%</span>
               </v-chip>
-
-              <span class="text-sm text-gray-500">
-                Compared from last month
-              </span>
             </div>
           </v-card-text>
+          <v-card-actions>
+            <div class="flex gap-2 items-center">
+              <span class="text-sm"> Compared from last month </span>
+            </div>
+          </v-card-actions>
         </v-card>
       </v-col>
+      <!-- <v-col cols="12" md="3">
+        <v-card>
+          <v-card-title> Last AUM </v-card-title>
+          <v-card-text class="flex items-start gap-4 mt-2">
+            <div class="font-bold text-3xl text-right flex items-center gap-2">
+              {{ formatCurrency(aum?.aum ?? 0) }}
+            </div>
+
+            <v-sparkline
+              :fill="fill"
+              :gradient="selectedGradient"
+              :line-width="lineWidth"
+              :model-value="value"
+              :padding="padding"
+              :smooth="smooth"
+              auto-draw
+            ></v-sparkline>
+          </v-card-text>
+        </v-card>
+      </v-col> -->
     </v-row>
 
     <v-row class="mt-4">
@@ -181,6 +200,23 @@ const { user } = useUserSession();
 
 const theme = useTheme();
 const selectedDate = ref<Date[]>([]);
+
+const cards = [0, 1, 2, 3];
+
+const gradients = [
+  ["#222"],
+  ["#42b3f4"],
+  ["red", "orange", "yellow"],
+  ["purple", "violet"],
+  ["#00c6ff", "#F0F", "#FF0"],
+  // ["#f72047", "#ffd200", "#1feaea"],
+];
+const fill = ref(true);
+const selectedGradient = ref(gradients[4]);
+const padding = ref(8);
+const smooth = ref(true);
+const value = ref([0, 2, 5, 9, 5, 10, 3, 5, 0, 0, 1, 8, 2, 9, 0]);
+const lineWidth = ref(2);
 
 const { data: aum } = await $trpc.dashboard.getAum.useQuery();
 const { data: revenueSeries } =

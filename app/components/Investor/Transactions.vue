@@ -54,6 +54,9 @@
     <template #item.amount="{ item }">
       {{ formatCurrency(Number(item.amount ?? 0)) }}
     </template>
+    <template #item.units="{ item }">
+      {{ formatThousand(Number(item.units ?? 0)) }}
+    </template>
   </v-data-table>
 </template>
 

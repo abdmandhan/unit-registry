@@ -2,6 +2,8 @@ import { baseProcedure, createTRPCRouter } from '../init'
 import { z } from 'zod'
 import { investorRouter } from './investor';
 import { dashboardRouter } from './dashboard';
+import { transactionsRouter } from './transactions';
+import { fundsRouter } from './funds';
 
 // IDOccupation?
 // IDObjectives?
@@ -116,6 +118,8 @@ export const appRouter = createTRPCRouter({
         }),
     investor: investorRouter,
     dashboard: dashboardRouter,
+    transactions: transactionsRouter,
+    funds: fundsRouter,
     references: baseProcedure.input(
         z.object({
             reference_name: z.string(),
