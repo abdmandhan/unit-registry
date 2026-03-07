@@ -101,12 +101,12 @@
           <v-card-title>AUM Trend</v-card-title>
           <v-card-text>
             <ClientOnly>
-              <ApexChart
+              <!-- <ApexChart
                 type="line"
                 height="300"
                 :options="aumChartOptions"
                 :series="aumChartSeries"
-              />
+              /> -->
             </ClientOnly>
           </v-card-text>
         </v-card>
@@ -165,12 +165,12 @@
           <v-card-title>Revenue Trend</v-card-title>
           <v-card-text>
             <ClientOnly>
-              <ApexChart
+              <!-- <ApexChart
                 type="line"
                 height="300"
                 :options="revenueChartOptions"
                 :series="revenueChartSeries"
-              />
+              /> -->
             </ClientOnly>
           </v-card-text>
         </v-card>
@@ -180,12 +180,12 @@
           <v-card-title>Investor Type</v-card-title>
           <v-card-text>
             <ClientOnly>
-              <ApexChart
+              <!-- <ApexChart
                 type="donut"
                 height="300"
                 :options="investorDonutOptions"
                 :series="investorDonutSeries"
-              />
+              /> -->
             </ClientOnly>
           </v-card-text>
         </v-card>
