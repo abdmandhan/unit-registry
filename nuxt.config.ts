@@ -35,6 +35,14 @@ export default defineNuxtConfig({
       },
     },
   },
+  nitro: {
+    preset: 'bun'
+  },
+  vite: {
+    server: {
+      allowedHosts: ['3000.abdmandhan.com', 'nuc.test']
+    }
+  },
 
   css: [
     '~/assets/css/main.css',
