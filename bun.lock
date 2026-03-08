@@ -14,13 +14,12 @@
         "@trpc/server": "^11.11.0",
         "apexcharts": "^5.10.1",
         "bcryptjs": "^3.0.3",
-        "nuxt": "^4.2.2",
+        "nuxt": "^4.3.1",
         "nuxt-auth-utils": "^0.5.29",
         "pg": "^8.19.0",
         "pinia": "^3.0.4",
         "trpc-nuxt": "^2.0.1",
         "vue": "^3.5.26",
-        "vue-apexcharts": "^1.7.0",
         "vue3-apexcharts": "^1.11.1",
         "vuetify": "^4.0.0",
         "vuetify-nuxt-module": "^0.19.5",
@@ -1933,8 +1932,6 @@
     "vscode-uri": ["vscode-uri@3.1.0", "", {}, "sha512-/BpdSx+yCQGnCvecbyXdxHDkuk55/G3xwnC0GqY4gmQ3j+A+g8kzzgB4Nk/SINjqn6+waqw3EgbVF2QKExkRxQ=="],
 
     "vue": ["vue@3.5.29", "", { "dependencies": { "@vue/compiler-dom": "3.5.29", "@vue/compiler-sfc": "3.5.29", "@vue/runtime-dom": "3.5.29", "@vue/server-renderer": "3.5.29", "@vue/shared": "3.5.29" }, "peerDependencies": { "typescript": "*" }, "optionalPeers": ["typescript"] }, "sha512-BZqN4Ze6mDQVNAni0IHeMJ5mwr8VAJ3MQC9FmprRhcBYENw+wOAAjRj8jfmN6FLl0j96OXbR+CjWhmAmM+QGnA=="],
-
-    "vue-apexcharts": ["vue-apexcharts@1.7.0", "", { "peerDependencies": { "apexcharts": ">=4.0.0", "vue": "^2.5.17" } }, "sha512-QMpvBllJ1XvFsK4dwcbyxKalVpHfJnoqsNWszY55HJk/Sn7WP1f5YUv4JIzugqu4GTQB6gLcCVwwPDQFtwr0oQ=="],
 
     "vue-bundle-renderer": ["vue-bundle-renderer@2.2.0", "", { "dependencies": { "ufo": "^1.6.1" } }, "sha512-sz/0WEdYH1KfaOm0XaBmRZOWgYTEvUDt6yPYaUzl4E52qzgWLlknaPPTTZmp6benaPTlQAI/hN1x3tAzZygycg=="],
 

@@ -7,16 +7,8 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     'vuetify-nuxt-module',
     '@pinia/nuxt',
-    // '@nuxtjs/i18n',
     '@nuxtjs/tailwindcss',
     'nuxt-auth-utils'
-  ],
-  plugins: [
-    {
-      src: '~/plugins/apexcharts.client.ts',
-      mode: 'client'
-    }
-
   ],
 
   eslint: {
