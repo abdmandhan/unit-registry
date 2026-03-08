@@ -13,14 +13,11 @@
           :loading="loading"
           v-model:page="page"
           v-model:sort-by="sortBy"
-          show-select
-          select-strategy="single"
           item-value="id"
           v-model="selectedInvestor"
         >
           <template #body.prepend>
             <tr>
-              <td></td>
               <td>
                 <v-select
                   :hide-details="true"
@@ -52,6 +49,7 @@
                 />
               </td>
               <td></td>
+              <td></td>
             </tr>
           </template>
 
@@ -65,6 +63,11 @@
           </template>
           <template #item.full_name="{ item }">
             {{ item.full_name }}
+          </template>
+          <template #item.actions>
+            <v-btn flat icon size="small">
+              <v-icon>mdi-eye</v-icon>
+            </v-btn>
           </template>
         </v-data-table-server>
       </v-card-text>
@@ -125,5 +128,6 @@ const headers = ref([
   { title: "SID", sortable: true, key: "sid" },
   { title: "Email", sortable: true, key: "email" },
   { title: "AUM", sortable: true, key: "aum" },
+  { title: "Actions", sortable: false, key: "actions" },
 ]);
 </script>

@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-const { $trpc } = useNuxtApp();
+import { validate } from "~~/shared/types/pagination";
 
 const page = ref(1);
 const pageSize = ref(10);
@@ -32,14 +32,20 @@ const sortBy = ref<{ key: string; order: "desc" | "asc" }[]>([
   { key: "aum", order: "desc" },
 ]);
 
-const { data: funds, pending: loading } = await $trpc.funds.list.useQuery(
-  () => ({
+const query = computed(() =>
+  validate({
     page: page.value,
     page_size: pageSize.value,
-    sort_by: sortBy.value[0]?.key ?? "id",
+    sort_by: sortBy.value[0]?.key ?? "aum",
     sort_order: sortBy.value[0]?.order ?? "desc",
   }),
 );
+
+const { data: funds, pending: loading } = await useFetch("/api/funds", {
+  query,
+  watch: [query],
+  immediate: true,
+});
 
 const headers = ref([
   { title: "ID", key: "id" },
