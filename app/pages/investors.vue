@@ -31,23 +31,23 @@
                     { text: 'Individual', value: 'I' },
                     { text: 'Corporate', value: 'C' },
                   ]"
-                  v-model="searchs.investor_type_id"
+                  v-model="searches.investor_type_id"
                 />
               </td>
               <td>
                 <v-text-field
                   :hide-details="true"
-                  v-model="searchs.full_name"
+                  v-model="searches.full_name"
                 />
               </td>
               <td>
-                <v-text-field :hide-details="true" v-model="searchs.sid" />
+                <v-text-field :hide-details="true" v-model="searches.sid" />
               </td>
 
               <td>
                 <v-text-field
                   :hide-details="true"
-                  v-model="searchs.email"
+                  v-model="searches.email"
                   type="email"
                 />
               </td>
@@ -70,46 +70,54 @@
       </v-card-text>
     </v-card>
 
-    <v-container class="mt-4 pa-0">
+    <!-- <v-container class="mt-4 pa-0">
       <InvestorView
         v-if="Number(selectedInvestor?.length) > 0"
         :investor-id="selectedInvestor?.[0] ?? ''"
       />
-    </v-container>
+    </v-container> -->
   </v-container>
 </template>
 
 <script lang="ts" setup>
+import { validate } from "~~/shared/types/pagination";
 definePageMeta({
   middleware: "authenticated",
 });
 
-const { $trpc } = useNuxtApp();
-
 const page = ref(1);
 const pageSize = ref(10);
 const sortBy = ref<{ key: string; order: "desc" | "asc" }[]>([
-  { key: "aum", order: "desc" },
+  { key: "id", order: "desc" },
 ]);
 const selectedInvestor = ref<string | null>(null);
-const searchs = ref({
+const searches = ref({
   full_name: "",
   sid: "",
   investor_type_id: "",
   email: "",
 });
 
-const { data: investors, pending: loading } =
-  await $trpc.investor.list.useQuery(() => ({
+const query = computed(() =>
+  validate({
     page: page.value,
     page_size: pageSize.value,
     sort_by: sortBy.value[0]?.key ?? "id",
     sort_order: sortBy.value[0]?.order ?? "desc",
-    searchs: Object.entries(searchs.value).map(([key, value]) => ({
-      key,
-      value,
-    })),
-  }));
+    filters: JSON.stringify(
+      Object.entries(searches.value).map(([key, value]) => ({
+        key,
+        value,
+      })),
+    ),
+  }),
+);
+
+const { data: investors, pending: loading } = await useFetch("/api/investors", {
+  query,
+  watch: [query],
+  immediate: true,
+});
 
 const headers = ref([
   { title: "Investor Type", sortable: true, key: "investor_type_id" },
