@@ -9,7 +9,11 @@ export default defineEventHandler(async (event) => {
         const navs = await prisma.fund_navs.findMany({
             take: page_size,
             skip: (page - 1) * page_size,
-            orderBy: { [sort_by]: sort_order },
+            // orderBy: { [sort_by]: sort_order },
+            orderBy: [
+                { [sort_by]: sort_order },
+                { fund: { code: 'asc' } }
+            ],
             include: {
                 fund: {
                     select: {

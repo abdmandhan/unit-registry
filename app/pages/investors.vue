@@ -13,8 +13,8 @@
           :loading="loading"
           v-model:page="page"
           v-model:sort-by="sortBy"
-          item-value="id"
           v-model="selectedInvestor"
+          item-value="id"
         >
           <template #body.prepend>
             <tr>

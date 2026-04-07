@@ -14,6 +14,15 @@
           <template #item.date="{ item }">
             {{ formatDate(item.date) }}
           </template>
+          <template #item.nav="{ item }">
+            {{ formatCurrency(Number(item.nav ?? 0)) }}
+          </template>
+          <template #item.nav_per_unit="{ item }">
+            {{ formatCurrency(Number(item.nav_per_unit ?? 0)) }}
+          </template>
+          <template #item.outstanding_unit="{ item }">
+            {{ formatThousand(Number(item.outstanding_unit ?? 0)) }}
+          </template>
         </v-data-table-server>
       </v-card-text>
     </v-card>

@@ -15,16 +15,6 @@
             <tr>
               <td></td>
               <td>
-                <v-text-field :hide-details="true" v-model="filters.name" />
-              </td>
-              <td>
-                <v-text-field :hide-details="true" v-model="filters.code" />
-              </td>
-              <td>
-                <!-- <v-text-field
-                  :hide-details="true"
-                  v-model="filters.reference_name"
-                /> -->
                 <v-autocomplete
                   density="compact"
                   :hide-details="true"
@@ -33,6 +23,12 @@
                   item-title="reference_name"
                   item-value="reference_name"
                 />
+              </td>
+              <td>
+                <v-text-field :hide-details="true" v-model="filters.name" />
+              </td>
+              <td>
+                <v-text-field :hide-details="true" v-model="filters.code" />
               </td>
             </tr>
           </template>
@@ -88,8 +84,8 @@ const { data: referenceList, pending: referenceListLoading } = await useFetch(
 
 const headers = ref([
   { title: "ID", key: "id" },
+  { title: "Reference Name", key: "reference_name", maxWidth: 200 },
   { title: "Name", key: "name" },
   { title: "Code", key: "code" },
-  { title: "Reference Name", key: "reference_name", maxWidth: 200 },
 ]);
 </script>
